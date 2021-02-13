@@ -33,6 +33,7 @@ app.use(bodyParser.json());
 
 app.use('/', express.static(__dirname + '/public/uploads/'));
 app.use('/assets/images', express.static(__dirname + '/assets/images/'));
+app.use('/assets/css', express.static(__dirname + '/assets/css/'));
 // app.use('/profile-images', express.static(__dirname + '/public/uploads/customer/profile_images'));
 // app.use('/category', express.static(__dirname + '/public/uploads/category'));
 

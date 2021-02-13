@@ -1,12 +1,12 @@
 {
-  "name": "floor-presence-api",
+  "name": "the-wealth-gap-api",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "start": "nodemon server.js"
   },
-  "author": "debargha (branium)",
+  "author": "DebarghaPaul@BrainiumInformationTechnologies",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.19.0",

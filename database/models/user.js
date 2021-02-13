@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const moment = require('moment');
 
 const userType = {
     SYSTEM_ADMIN: 'system_admin',
@@ -17,7 +18,13 @@ const UserSchema = new Schema({
         default: userType.USER
     },
     mobile: {type: String, default: ''},
-    address: {type: String, default: ''},
+    location: {type: String},
+    city: {type: String},
+    state: {type: String},
+    dob: {
+        type: Date,
+        // max: moment().subtract(1).format('yyyy-mm-dd')
+    },
     photo: {type: String, default: ''},
     cover_photo: {type: String, default: ''},
     deleted: {type: Boolean, default: false}

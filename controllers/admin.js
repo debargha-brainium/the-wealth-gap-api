@@ -36,9 +36,11 @@ exports.addUser = async (req, res) => {
         lastname: req.body.lastname,
         email: req.body.email,
         password: encryptPassword(req.body.password),
-        user_type: 'user',
         mobile: req.body.mobile,
-        address: req.body.address
+        location: req.body.location,
+        city: req.body.city,
+        state: req.body.state,
+        dob: req.body.dob
     }
 
     try {
@@ -59,9 +61,11 @@ exports.editUser = async (req, res) => {
         lastname: req.body.lastname,
         // email: req.body.email,
         // password: encryptPassword(req.body.password),
-        // user_type: 'user',
         mobile: req.body.mobile,
-        address: req.body.address
+        location: req.body.location,
+        city: req.body.city,
+        state: req.body.state,
+        dob: req.body.dob
     }
 
     const {user_id}=req.params;

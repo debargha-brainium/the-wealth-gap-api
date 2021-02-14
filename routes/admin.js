@@ -25,7 +25,7 @@ module.exports = [
     {
         path: '/get-users',
         controller: 'admin.getUserList',
-        method: 'post',
+        // method: 'post',
         raw: true
     },
     {

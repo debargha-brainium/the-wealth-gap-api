@@ -68,7 +68,7 @@ exports.editUser = async (req, res) => {
         dob: req.body.dob
     }
 
-    const {user_id}=req.params;
+    const {user_id} = req.params;
 
     try {
         let updatedData = await user_provider.updateUser(user_id, userData);
@@ -79,17 +79,54 @@ exports.editUser = async (req, res) => {
     }
 }
 
+exports.deleteUser = async (req, res) => {
+    const userID = await verifySystemAdmin(req, res);
+    if (!userID) return;
+    try {
+        let deletedUser = await user_provider.deleteUser(req.params.user_id);
+        if (deletedUser)
+            sendData(res, deletedUser, 'User deleted');
+        else
+            sendError(res, null, 'Delete Failed', 200);
+    } catch (e) {
+        // console.log('>>>',e)
+        sendError(res, e, 'MongooseError', 200);
+    }
+}
 exports.getUserList = async (req, res) => {
     const userID = await verifySystemAdmin(req, res);
     if (!userID) return;
-    let userList = await user_provider.findUsers({user_type: {$ne: 'system_admin'}});
-    sendData(res, userList);
+
+    let {page_limit, page_number, search_key} = req.query;
+    page_limit = parseInt(page_limit) || 10;
+    page_number = parseInt(page_number) || 1;
+
+    let condition = {user_type: {$ne: 'system_admin'}, deleted: false}
+    let skip = (page_number - 1) * page_limit;
+
+    if (search_key){
+        condition.$or = [
+            {firstname: search_key},
+            {lastname: search_key},
+            {email: search_key},
+            {mobile: search_key},
+            {state: search_key},
+        ]
+    }
+
+    let userList = await user_provider.findUsers(page_limit, skip, condition);
+    if (userList.length) {
+        const totalCount = await user_provider.countUsers(condition);
+        sendData(res, userList, 'Data fetched', 200, {count: totalCount});
+    } else {
+        sendError(res, null, 'No data found', 200);
+    }
 }
 
 exports.getUserDetails = async (req, res) => {
     const userID = await verifySystemAdmin(req, res);
     if (!userID) return;
-    let userDetails = await user_provider.findUserByID(req.query.user_id);
+    let userDetails = await user_provider.findUserByID(req.params.user_id);
     sendData(res, userDetails);
 }
 

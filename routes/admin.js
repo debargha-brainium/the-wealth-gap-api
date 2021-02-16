@@ -23,13 +23,18 @@ module.exports = [
         raw: true
     },
     {
-        path: '/get-users',
-        controller: 'admin.getUserList',
-        // method: 'post',
+        path: '/delete-user/:user_id',
+        controller: 'admin.deleteUser',
+        method: 'post',
         raw: true
     },
     {
-        path: '/get-user-details',
+        path: '/get-users',
+        controller: 'admin.getUserList',
+        raw: true
+    },
+    {
+        path: '/get-user-details/:user_id',
         controller: 'admin.getUserDetails',
         raw: true
     }

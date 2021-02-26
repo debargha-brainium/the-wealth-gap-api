@@ -31,5 +31,15 @@ module.exports = [
         controller: 'common.resetPassword',
         method: 'post',
         raw: true
-    }
+    },
+    {
+        path: '/get-languages',
+        controller: 'common.getLanguageList',
+        raw: true
+    },
+    {
+        path: '/get-language-details/:language_id',
+        controller: 'common.getLanguageDetails',
+        raw: true
+    },
 ]

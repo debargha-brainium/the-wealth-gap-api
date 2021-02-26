@@ -19,7 +19,7 @@ exports.verifyToken = (token) => {
     try {
         return jwt.verify(token, process.env.SECRET)
     } catch (err){
-        console.log(err)
+        // console.log(err)
         return 0;
     }
 }

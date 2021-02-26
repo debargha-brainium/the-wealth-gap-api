@@ -45,7 +45,7 @@ exports.connect = (seed) => {
     con.then(() => {
         console.log('successfully connected to database');
         if (seed)
-            require('./seeders').seed(['admin', 'cms', 'email_template']);//disable this line if you don't want default admin seeding
+            require('./seeders').seed(['admin', 'email_template']);//disable this line if you don't want default admin seeding
         else
             return con;
     }).catch((e) => {

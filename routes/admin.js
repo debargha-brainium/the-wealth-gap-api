@@ -37,5 +37,26 @@ module.exports = [
         path: '/get-user-details/:user_id',
         controller: 'admin.getUserDetails',
         raw: true
-    }
+    },
+    /**
+     * Languages
+     */
+    {
+        path: '/add-language',
+        controller: 'admin.addLanguage',
+        method: 'post',
+        raw: true
+    },
+    {
+        path: '/update-language/:language_id',
+        controller: 'admin.updateLanguage',
+        method: 'post',
+        raw: true
+    },
+    {
+        path: '/delete-language/:language_id',
+        controller: 'admin.deleteLanguage',
+        method: 'post',
+        raw: true
+    },
 ]

@@ -1,4 +1,4 @@
-const {common_provider, cms_provider, user_provider} = require("../database/providers");
+const {common_provider, cms_provider, user_provider, language_provider} = require("../database/providers");
 const {deleteFiles, encryptPassword} = require("../utility");
 const {getObjectIDFromToken} = require("../utility/helpers");
 
@@ -104,7 +104,7 @@ exports.getUserList = async (req, res) => {
     let condition = {user_type: {$ne: 'system_admin'}, deleted: false}
     let skip = (page_number - 1) * page_limit;
 
-    if (search_key){
+    if (search_key) {
         condition.$or = [
             {firstname: search_key},
             {lastname: search_key},
@@ -141,13 +141,17 @@ exports.editCMSPage = async (req, res) => {
     const userID = await verifySystemAdmin(req, res);
     if (!userID) return;
     let {
-        page_name, slug, page_content, meta_title, meta_description, meta_keywords, status, built_in
+        page_name, slug, meta_title, meta_description, meta_keywords, status, built_in,
+        language_id, content
     } = req.body;
     const {cms_id} = req.params;
     let data = {
         page_name: page_name,
         slug: slug,
-        page_content: page_content,
+        page_content: {
+            language_id: language_id,
+            content: content
+        },
         meta_title: meta_title,
         meta_description: meta_description,
         meta_keywords: meta_keywords,
@@ -166,4 +170,44 @@ exports.editCMSPage = async (req, res) => {
     //     sendData(res, updatedData, 'CMS Updated');
     // else
     //     sendError(res, null, 'Failed to update CMS');
+}
+
+
+exports.addLanguage = async (req, res) => {
+    const userID = await verifySystemAdmin(req, res);
+    if (!userID) return;
+    const {name, code} = req.body;
+    let data = {name: name, code: code};
+    try {
+        const insertedData = await language_provider.createLanguage(data);
+        sendData(res, insertedData, 'Language Inserted');
+    } catch (e) {
+        sendError(res, e, 'MongooseError', 200);
+    }
+}
+
+exports.updateLanguage = async (req, res) => {
+    const userID = await verifySystemAdmin(req, res);
+    if (!userID) return;
+    const {name, code} = req.body;
+    let data = {name: name, code: code};
+    let {language_id} = req.params;
+    try {
+        const updatedData = await language_provider.updateLanguage(language_id, data);
+        sendData(res, updatedData, 'Language updated');
+    } catch (e) {
+        sendError(res, e, 'MongooseError', 200);
+    }
+}
+
+exports.deleteLanguage = async (req, res) => {
+    const userID = await verifySystemAdmin(req, res);
+    if (!userID) return;
+    let {language_id} = req.params;
+    try {
+        const deletedData = await language_provider.deleteLanguage(language_id);
+        sendData(res, deletedData, 'Language deleted');
+    } catch (e) {
+        sendError(res, e, 'MongooseError', 200);
+    }
 }

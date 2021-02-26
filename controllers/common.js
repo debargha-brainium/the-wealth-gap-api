@@ -1,5 +1,5 @@
 const {createJWT, encryptPassword, verifyToken} = require("../utility");
-const {common_provider, cms_provider, user_provider} = require('../database/providers');
+const {common_provider, cms_provider, user_provider, language_provider} = require('../database/providers');
 const country = require('../assets/country');
 const state = require('../assets/state');
 const email_service = require('../services/email-service');
@@ -86,4 +86,18 @@ exports.resetPassword = async (req, res) => {
     } else
         sendError(res, null, 'Link Expired', 200);
 
+}
+
+
+exports.getLanguageList = async (req, res) => {
+    let condition = {deleted: false};
+    let sort = {name: 1};
+    const languages= await language_provider.getAll(sort, condition);
+    const totalCount = await language_provider.count();
+    sendData(res,languages, 'Data fetched', 200, {count: totalCount});
+}
+
+exports.getLanguageDetails = async (req, res) => {
+    const languageDetails = await language_provider.getOne(req.params.language_id);
+    sendData(res, languageDetails);
 }

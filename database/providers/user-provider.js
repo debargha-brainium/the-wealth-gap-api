@@ -1,19 +1,21 @@
 const {USER} = require('../models');
 
 
-exports.createUser = (data) => USER.model.create(data);
+module.exports = {
+    createUser: (data) => USER.model.create(data),
 
-exports.updateUser = (id, data) => USER.model.findByIdAndUpdate(id, {$set: data});
+    updateUser: (id, data) => USER.model.findByIdAndUpdate(id, {$set: data}),
 
-exports.deleteUser = (id) => USER.model.findByIdAndUpdate(id, {$set: {deleted: true}});
+    deleteUser: (id) => USER.model.findByIdAndUpdate(id, {$set: {deleted: true}}),
 
-exports.findUsers = (limit, skip, condition = {}) => USER.model.find(condition).skip(skip).limit(limit);
+    findUsers: (limit, skip, condition = {}) => USER.model.find(condition).sort({_id: -1}).skip(skip).limit(limit),
 
-exports.findUserByID = (id) =>USER.model.findById(id);
+    findUserByID: (id) => USER.model.findById(id),
 
-exports.findUserByEmail = (email) =>USER.model.findOne({email: email});
+    findUserByEmail: (email) => USER.model.findOne({email: email}),
 
-exports.updatePassword = (user_id, password)=>
-    USER.model.findByIdAndUpdate(user_id, {$set: {password: password}});
+    updatePassword: (user_id, password) =>
+        USER.model.findByIdAndUpdate(user_id, {$set: {password: password}}),
 
-exports.countUsers = (condition={}) =>USER.model.countDocuments(condition)
+    countUsers: (condition = {}) => USER.model.countDocuments(condition)
+}

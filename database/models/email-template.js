@@ -2,7 +2,9 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const templateName = {
-    forgot_password: 'Forgot-Password'
+    forgot_password: 'Forgot-Password',
+    registration: 'Registration',
+    account_verification: 'Account-Verification'
 }
 
 const EmailTemplateSchema = new Schema({

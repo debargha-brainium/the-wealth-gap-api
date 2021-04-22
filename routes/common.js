@@ -26,9 +26,28 @@ module.exports = [
         raw: true
     },
     {
+        path: '/update-password',
+        middleware: 'token.validateToken',
+        controller: 'common.updatePassword',
+        method: 'post',
+        raw: true
+    },
+    {
         path: '/reset-password',
         middleware: 'validation.resetPassword',
         controller: 'common.resetPassword',
+        method: 'post',
+        raw: true
+    },
+    {
+        path: "/send-otp",
+        controller: "common.sendOTP",
+        method: 'post',
+        raw: true
+    },
+    {
+        path: "/verify-otp",
+        controller: "common.verifyOTP",
         method: 'post',
         raw: true
     },

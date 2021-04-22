@@ -4,6 +4,8 @@ const country = require('../assets/country');
 const state = require('../assets/state');
 const email_service = require('../services/email-service');
 const jwt = require('jsonwebtoken');
+const moment = require('moment');
+const {sendEmailConfirmUser} = require("../services/email-service");
 
 exports.login = async (req, res) => {
     console.log('Connecting from', req.ip);
@@ -75,6 +77,7 @@ exports.sendResetPasswordEmail = async (req, res) => {
     }
 }
 
+
 exports.resetPassword = async (req, res) => {
     let {token, password} = req.body;
 
@@ -82,19 +85,67 @@ exports.resetPassword = async (req, res) => {
     if (tokenData && tokenData.user_id) {
         password = encryptPassword(password);
         const updatedData = await user_provider.updatePassword(tokenData.user_id.toString(), password);
-        sendData(res, null, updatedData?'Password updated successfully': 'Failed to update password');
+        sendData(res, null, updatedData ? 'Password updated successfully' : 'Failed to update password');
     } else
         sendError(res, null, 'Link Expired', 200);
 
+}
+
+exports.sendOTP = async (req, res) => {
+    const {email} = req.body;
+    let otp = Math.floor(Math.random() * (9999 - 1000) + 1000);
+    const old = await common_provider.findExistingOTP(email);
+    const now = moment().unix();
+    if (old && old.send_time + 180 > now) {
+        otp = old.otp;
+    } else {
+        await common_provider.upsertOTP(email, otp, now);
+    }
+    const verificationEmail = await sendEmailConfirmUser(email, otp);
+    sendData(res, {email_status: verificationEmail.response}, 'Email sent successfully in your email id');
+};
+
+
+exports.verifyOTP = async (req, res) => {
+    const {email, otp} = req.body;
+    const otpData = await common_provider.findExistingOTP(email);
+
+    const now = moment().unix();
+    if (otpData && otpData.otp === otp.toString() && now < otpData.send_time + 300) {
+        // delete existing otp after successfully verification
+        await common_provider.deleteOtp(email);
+        // fetch user data
+        let userData = await common_provider.getUserByEmail(email);
+        // create access token
+        const accessToken = await createJWT({
+            userid: userData._id,
+        });
+
+        sendData(res, userData, 'Otp matched', 200, {_accessToken: accessToken});
+    } else {
+        sendError(res, null, 'invalid otp', 200);
+    }
+}
+
+exports.updatePassword = async (req, res) => {
+    const userID = req.user.userid;
+    const {new_password, confirm_password} = req.body;
+    if (confirm_password && new_password !== confirm_password) {
+        sendError(res, null, 'new_password and confirm_password value must be same');
+    } else {
+        let password = encryptPassword(new_password.toString());
+        const updatedData = await user_provider.updatePassword(userID, password);
+        sendData(res, null, updatedData ? 'Password updated successfully' : 'Failed to update password');
+    }
 }
 
 
 exports.getLanguageList = async (req, res) => {
     let condition = {deleted: false};
     let sort = {name: 1};
-    const languages= await language_provider.getAll(sort, condition);
+    const languages = await language_provider.getAll(sort, condition);
     const totalCount = await language_provider.count();
-    sendData(res,languages, 'Data fetched', 200, {count: totalCount});
+    sendData(res, languages, 'Data fetched', 200, {count: totalCount});
 }
 
 exports.getLanguageDetails = async (req, res) => {

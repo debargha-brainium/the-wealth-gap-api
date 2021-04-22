@@ -5,7 +5,9 @@ const path = require('path');
 const crypto = require('crypto');
 
 exports.createJWT = (data, expiresIn) =>
-    jwt.sign(data, process.env.SECRET, {expiresIn: expiresIn || 60 * 60 * 24 * 365});
+    jwt.sign(data, process.env.JWT_KEY, {
+        // expiresIn: expiresIn || 60 * 60 * 24 * 365
+    });
 
 exports.verifyToken = (token) => {
     // const decodedToken = jwt.verify(token, secret, function (err, decoded) {
@@ -17,7 +19,7 @@ exports.verifyToken = (token) => {
     // });
     // return decodedToken;
     try {
-        return jwt.verify(token, process.env.SECRET)
+        return jwt.verify(token, process.env.JWT_KEY)
     } catch (err){
         // console.log(err)
         return 0;

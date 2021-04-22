@@ -4,4 +4,5 @@ module.exports={
     cms_provider: require('./cms-provider'),
     language_provider: require('./language-provider'),
     user_provider: require('./user-provider'),
+    email_provider: require('./email-template')
 }

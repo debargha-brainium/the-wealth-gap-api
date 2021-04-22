@@ -1,4 +1,7 @@
-exports.USER = require('./user');
-exports.CMS = require('./cms');
-exports.EMAIL_TEMPLATE = require('./email-template');
-exports.LANGUAGE = require('./language');
+module.exports= {
+    USER: require('./user'),
+    CMS: require('./cms'),
+    EMAIL_TEMPLATE: require('./email-template'),
+    LANGUAGE: require('./language'),
+    OTP: require('./otp'),
+}

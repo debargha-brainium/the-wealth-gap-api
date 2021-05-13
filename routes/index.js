@@ -7,7 +7,8 @@ const routerJson = [
         children: [
             ...require('./admin'),
             ...require('./common'),
-            ...require('./users')
+            ...require('./users'),
+            ...require('./chat')
         ]
     }
 ];

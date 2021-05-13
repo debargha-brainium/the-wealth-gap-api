@@ -68,3 +68,6 @@ exports.user = validate({
 exports.resetPassword = validate({
     password: 'required'
 })
+exports.content=validate({
+    content: 'string|required'
+});

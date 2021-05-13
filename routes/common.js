@@ -33,6 +33,13 @@ module.exports = [
         raw: true
     },
     {
+        path: '/change-password',
+        middleware: 'token.validateToken',
+        controller: 'common.changePassword',
+        method: 'post',
+        raw: true
+    },
+    {
         path: '/reset-password',
         middleware: 'validation.resetPassword',
         controller: 'common.resetPassword',
@@ -60,5 +67,24 @@ module.exports = [
         path: '/get-language-details/:language_id',
         controller: 'common.getLanguageDetails',
         raw: true
+    },
+    {
+        path: '/update-dp',
+        children: [
+            {
+                path: '/',
+                method: 'post',
+                middleware: ['token.validateToken','index.uploadDisplayPicture'],
+                controller: 'common.updateDisplayPicture',
+                raw: true
+            },
+            {
+                path: '/:type',
+                method: 'post',
+                middleware: ['token.validateToken','index.uploadDisplayPicture'],
+                controller: 'common.updateDisplayPicture',
+                raw: true
+            }
+        ]
     },
 ]

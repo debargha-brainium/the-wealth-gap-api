@@ -32,6 +32,16 @@ module.exports = {
             cert: "E:/brainium-projects/https-key/fullchain.pem",
             passphrase: "brainium123"
         },
+        socket: {
+            cors: {
+                //   origin: "http://localhost:4200",
+                origins: ["*"],
+                methods: ["GET", "POST"],
+                // allowedHeaders: ["my-custom-header"],
+                credentials: true
+            },
+            allowEIO3: true
+        }
     },
     production: {
         mongoURI: 'mongodb://brain1uMMong0User:PL5qnU9nuvX0pBa@nodeserver.mydevfactory.com:27017/the_wealth_gap?authSource=admin',
@@ -65,5 +75,15 @@ module.exports = {
             key: '/etc/letsencrypt/live/nodeserver.mydevfactory.com/privkey.pem',
             cert: '/etc/letsencrypt/live/nodeserver.mydevfactory.com/fullchain.pem'
         },
+        socket: {
+            cors: {
+                //   origin: "http://localhost:4200",
+                origins: ["*"],
+                methods: ["GET", "POST"],
+                allowedHeaders: ["my-custom-header"],
+                credentials: true
+            },
+            allowEIO3: true
+        }
     }
 }

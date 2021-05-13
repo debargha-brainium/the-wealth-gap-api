@@ -34,7 +34,7 @@ app.use(bodyParser.json());
 app.use('/', express.static(__dirname + '/public/uploads/'));
 app.use('/assets/images', express.static(__dirname + '/assets/images/'));
 app.use('/assets/css', express.static(__dirname + '/assets/css/'));
-// app.use('/profile-images', express.static(__dirname + '/public/uploads/customer/profile_images'));
+app.use('/display-picture', express.static(__dirname + '/public/uploads/display-picture/'));
 // app.use('/category', express.static(__dirname + '/public/uploads/category'));
 
 
@@ -57,3 +57,5 @@ app.use(router.createRouterFromJson(require('./routes')));
 
 global.appRoot = __dirname;
 global.appPort = PORT;
+
+require('./system/chat');

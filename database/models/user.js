@@ -29,7 +29,13 @@ const UserSchema = new Schema({
     cover_photo: {type: String, default: ''},
     deleted: {type: Boolean, default: false}
 })
+
+// UserSchema.virtual('name').get(function() {
+//     return this.firstname + this.lastname;
+// })
+
+
 module.exports = {
     model: mongoose.model('users', UserSchema),
-    DTOPropsProfile: '_id firstname lastname email user_type photo cover_photo mobile address'
+    DTOPropsProfile: '_id firstname lastname user_type photo cover_photo'
 }

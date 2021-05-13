@@ -17,5 +17,8 @@ module.exports = {
     updatePassword: (user_id, password) =>
         USER.model.findByIdAndUpdate(user_id, {$set: {password: password}}),
 
-    countUsers: (condition = {}) => USER.model.countDocuments(condition)
+    countUsers: (condition = {}) => USER.model.countDocuments(condition),
+
+    listUsers: (limit, skip, condition = {}, sort = {}) => USER.model.find(condition, USER.DTOPropsProfile).sort(sort).skip(skip).limit(limit),
+
 }

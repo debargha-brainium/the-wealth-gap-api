@@ -6,11 +6,12 @@ const email_service = require('../services/email-service');
 const jwt = require('jsonwebtoken');
 const moment = require('moment');
 const {sendEmailConfirmUser} = require("../services/email-service");
+const {deleteFiles} = require('../utility');
 
 exports.login = async (req, res) => {
     console.log('Connecting from', req.ip);
     let {email, password} = req.body;
-    const userDetails = await common_provider.getUserByEmail(email);
+    const userDetails = await common_provider.getUserByEmail(email.toString().toLocaleLowerCase());
     if (userDetails) {
         password = encryptPassword(password);
         if (userDetails.password === password) {
@@ -93,6 +94,12 @@ exports.resetPassword = async (req, res) => {
 
 exports.sendOTP = async (req, res) => {
     const {email} = req.body;
+    // fetch user data
+    let userData = await common_provider.getUserByEmail(email);
+    if (!userData){
+        sendError(res, null, "User with this email id doesn't exists", 200);
+        return;
+    }
     let otp = Math.floor(Math.random() * (9999 - 1000) + 1000);
     const old = await common_provider.findExistingOTP(email);
     const now = moment().unix();
@@ -139,6 +146,25 @@ exports.updatePassword = async (req, res) => {
     }
 }
 
+exports.changePassword = async (req, res) => {
+    const userID = req.user.userid;
+    let {old_password, new_password, confirm_password} = req.body;
+    if (confirm_password && new_password !== confirm_password) {
+        sendError(res, null, 'new_password and confirm_password value must be same');
+    } else {
+        let userData = await common_provider.getUserByObjectID(userID);
+
+        old_password = encryptPassword(old_password.toString());
+        if (old_password === userData.password) {
+            new_password = encryptPassword(new_password.toString());
+            const updatedData = await user_provider.updatePassword(userID, new_password);
+            sendData(res, null, updatedData ? 'Password updated successfully' : 'Failed to update password');
+        } else {
+            sendError(res, null, 'Old password is not matched with current password', 200);
+        }
+    }
+}
+
 
 exports.getLanguageList = async (req, res) => {
     let condition = {deleted: false};
@@ -151,4 +177,55 @@ exports.getLanguageList = async (req, res) => {
 exports.getLanguageDetails = async (req, res) => {
     const languageDetails = await language_provider.getOne(req.params.language_id);
     sendData(res, languageDetails);
+}
+
+
+exports.updateDisplayPicture = async (req, res) => {
+    const userID = req.user.userid;
+    if (!req.file) {
+        sendError(res, null, 'Failed to upload image');
+        return;
+    }
+    const old = await common_provider.getUserByObjectID(userID);
+    if (!old) {
+        try {
+            await deleteFiles(req.file.path);
+        } catch (e) {
+            console.log(e)
+        }
+        return;
+    }
+    let old_file = '';
+    if (req.params.type !== 'cover') {
+        old_file = old.photo;
+    } else {
+        old_file = old.cover_photo;
+    }
+    let data = {};
+    if (req.params.type !== 'cover') {
+        data.photo = 'display-picture/' + req.file.filename;
+    } else {
+        data.cover_photo = 'display-picture/' + req.file.filename;
+    }
+    const editUser = await user_provider.updateUser(userID, data);
+    if (editUser) {
+        sendData(res, data, 'Data updated');
+        if (req.file && old_file) {
+            console.log('deleting old file')
+            try {
+                await deleteFiles(old_file);
+            } catch (e) {
+                console.log(e)
+            }
+        }
+    } else {
+        sendError(res, null, 'Failed to upload image');
+        if (req.file) {
+            try {
+                await deleteFiles(req.file.path);
+            } catch (e) {
+                console.log(e)
+            }
+        }
+    }
 }
